@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""FastPair algorithm: hybrid of conga line and nearest neighbors.
+"""FastPair: Data-structure for the dynamic closest-pair problem.
 
-This is based on the observation that the conga line data structure,
-in practice, does better the more subsets you give to it: even though the
-worst case time for k subsets is O(nk log (n/k)), that worst case
+This data-structure is based on the observation that the conga line data
+structure, in practice, does better the more subsets you give to it: even
+though the worst case time for k subsets is O(nk log (n/k)), that worst case
 seems much harder to reach than the nearest neighbor algorithm.
 
 In the limit of arbitrarily many subsets, each new addition or point moved

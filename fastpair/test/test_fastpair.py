@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Testing module for FastPair algorithm."""
+"""FastPair: Data-structure for the dynamic closest-pair problem.
+
+Testing module for FastPair.
+"""
 
 # Copyright (c) 2016, Carson J. Q. Farmer <carsonfarmer@gmail.com>
 # Copyright (c) 2002-2015, David Eppstein
