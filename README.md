@@ -1,6 +1,6 @@
 # FastPair
 
-FastPair: Data-structure for dynamic closest-pair problem.
+FastPair: Data-structure for the dynamic closest-pair problem.
 
 ## Overview
 
