@@ -61,7 +61,7 @@ of tests. To run the tests, you can use [`py.test`](http://pytest.org/latest/)
 (maybe also `nosetests`?), which can be installed via `pip` using the
 `recommended.txt` file (note, this will also install `numpy`, `scipy`,
 `matplotlib`, and `IPython` which are all great and useful for
-tests and examples):
+tests and examples). So far testing has been done with `CPython` 2.7 and 3.4.
 
 ```bash
 pip install -r recommended.txt
