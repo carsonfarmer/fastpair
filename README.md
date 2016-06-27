@@ -1,12 +1,12 @@
 # FastPair
 
-FastPair: Data-structure for the dynamic closest-pair problem.
+Data-structure for the dynamic closest-pair problem.
 
 ## Overview
 
 This project is an implementation of the FastPair dynamic closest-pair
 data-structure described in David Eppstein's [Fast Hierarchical Clustering
-and Other Applications of Dynamic Closest Pairs](http://dl.acm.org/citation.cfm?id=351829)
+and Other Applications of Dynamic Closest Pairs](http://dl.acm.org/citation.cfm?id=351829).
 The data-structure is based on the observation that the [conga line data-
 structure](https://www.ics.uci.edu/~eppstein/projects/pairs/Methods/), in
 practice, does better the more subsets you give to it: even
