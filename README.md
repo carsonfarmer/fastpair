@@ -20,10 +20,10 @@ create the initial data structure, we use a conga line rather than
 all nearest neighbors, to keep the in-degree of each point low, and
 (2) when we insert a point, we don't bother updating other points' neighbors.
 
-Total space: $20n$ bytes. (Could be reduced to 4n at some cost in update time.)
-Time per insertion or single distance update: $O(n)$
-Time per deletion or point update: $O(n)$ expected, $O(n^2)$ worst case
-Time per closest pair: $O(n)$
+Total space: $20n$ bytes (could be reduced to 4n at some cost in update time).
+Time per insertion or single distance update: $O(n)$.
+Time per deletion or point update: $O(n)$ expected, $O(n^2)$ worst case.
+Time per closest pair: $O(n)$.
 
 This `Python` version of the algorithm combines ideas and code from the
 [closest-pair data structure testbed
