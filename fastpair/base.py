@@ -25,8 +25,8 @@ Time per closest pair: O(n)
 
 References
 ----------
-David Eppstein. *Fast hierarchical clustering and other applications of
-dynamic closest pairs*. SODA 1998.
+[1] Eppstein, David. Fast hierarchical clustering and other applications of
+    dynamic closest pairs. Journal of Experimental Algorithmics 5 (2000) 1.
 """
 
 # Copyright (c) 2016, Carson J. Q. Farmer <carsonfarmer@gmail.com>
