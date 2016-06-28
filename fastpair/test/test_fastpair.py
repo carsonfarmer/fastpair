@@ -191,7 +191,7 @@ class TestFastPairs:
         assert abs(res[0] - neigh["dist"]) < 1e-8
         assert res[1] == neigh["neigh"]
 
-    def test_merge_and_merge_closest(self):
+    def test_merge_closest(self):
         # Still failing sometimes...
         ps = PointSet()
         fp1 = FastPair().build(ps)
