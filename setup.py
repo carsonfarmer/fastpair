@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Installation script for FastPair algorithm."""
+"""FastPair: Data-structure for the dynamic closest-pair problem.
+
+Installation script for FastPair.
+"""
 
 # Copyright (c) 2016, Carson J. Q. Farmer <carsonfarmer@gmail.com>
 # Copyright (c) 2002-2015, David Eppstein
@@ -17,7 +20,7 @@ except ImportError:
     from distutils.core import setup, find_packages
 
 PACKAGE_NAME = "FastPair"
-DESCRIPTION = "FastPair algorithm: hybrid of conga line and nearest neighbors."
+DESCRIPTION = "FastPair: Data-structure for the dynamic closest-pair problem."
 
 MAJOR = 0
 MINOR = 1
