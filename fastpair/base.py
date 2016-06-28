@@ -25,7 +25,7 @@ Time per closest pair: O(n)
 
 References
 ----------
-[1] Eppstein, David. Fast hierarchical clustering and other applications of
+[1] Eppstein, David: Fast hierarchical clustering and other applications of
     dynamic closest pairs. Journal of Experimental Algorithmics 5 (2000) 1.
 """
 
@@ -63,7 +63,7 @@ class _adict(dict):
 class FastPair(object):
     """FastPair 'sketch' class.
     """
-    def __init__(self, min_points=10, dist=default_dist, points=None):
+    def __init__(self, min_points=10, dist=default_dist, merge=interact):
         """Initialize an empty FastPair data-structure.
 
         Parameters
@@ -76,15 +76,22 @@ class FastPair(object):
             Can be any Python function that returns a distance (float) between
             between two vectors (tuples) `u` and `v`. Any distance function
             from `scipy.spatial.distance` will do the trick. By default, the
-            Euclidean distance function is used.
+            Euclidean distance function is used. This function should play
+            nicely with the `merge` function.
+        merge : function, default=scipy.mean
+            Can be any Python function that returns a single 'point' from two
+            input 'points'. By default, the element-wise mean(s) from two input
+            point arrays is used. If a user has a 'special' point class; for
+            example, one that represents cluster centroids, then the user can
+            specify a function that returns valid clusters. This function
+            should play nicely with the `dist` function.
         """
         self.min_points = min_points
         self.dist = dist
+        self.merge = merge
         self.initialized = False  # Has the data-structure been initialized?
         self.neighbors = _ddict(_adict)  # Dict of neighbor points and dists
         self.points = list()  # Internal point set; entries may be non-unique
-        if points is not None:  # Build right away if we have initial points
-            self.build(points)
 
     def __add__(self, p):
         """Add a point and find its nearest neighbor.
@@ -154,7 +161,7 @@ class FastPair(object):
             self.points[nbr] = self.points[i + 1]
             self.points[i + 1] = self.neighbors[self.points[i]].neigh
         # No more neighbors, terminate conga line
-        # We avoid using negative indexes...
+        # We avoid using negative indexes... just 'cause for now!
         self.neighbors[self.points[np-1]].neigh = self.points[np-1]
         self.neighbors[self.points[np-1]].dist = float("inf")
         self.initialized = True
@@ -200,7 +207,6 @@ class FastPair(object):
                 first_nbr = 1
             self.neighbors[p].neigh = self.points[first_nbr]
             self.neighbors[p].dist = self.dist(p, self.neighbors[p].neigh)
-
             # Now test whether each other point is closer
             for q in self.points[first_nbr+1:]:
                 if p != q:
@@ -210,16 +216,11 @@ class FastPair(object):
                         self.neighbors[p].neigh = q
         return dict(self.neighbors[p])  # Return plain ol' dict
 
-    def merge(self, a, b):
-        if not a in self.points or not b in self.points:
-            raise ValueError("Can only merge points already in data-structure.")
-        c = interact(a, b)
-        self -= b
-        return self.update_point(a, c)
-
     def merge_closest(self):
         dist, (a, b) = self.closest_pair()
-        return self.merge(a, b)
+        c = self.merge(a, b)
+        self -= b
+        return self.update_point(a, c)
 
     def update_point(self, old, new):
         """Update point location, neighbors, and distances.
