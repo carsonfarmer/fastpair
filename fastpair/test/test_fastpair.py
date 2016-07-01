@@ -87,9 +87,9 @@ class TestFastPairs:
     def test_sub(self):
         ps = PointSet()
         fp = FastPair().build(ps)
-        start = fp.find_neighbor(ps[-1])
+        start = fp._find_neighbor(ps[-1])
         fp -= ps[-1]
-        end = fp.find_neighbor(start["neigh"])
+        end = fp._find_neighbor(start["neigh"])
         assert end["neigh"] != ps[-1]
         # This is risky, because it might legitimately be the same...?
         assert start["dist"] != end["dist"]
@@ -139,7 +139,7 @@ class TestFastPairs:
         ps = PointSet()
         fp = FastPair().build(ps)
         rando = rand_tuple(len(ps[0]))
-        neigh = fp.find_neighbor(rando)
+        neigh = fp._find_neighbor(rando)  # Abusing find_neighbor!
         dist = fp.dist(rando, neigh["neigh"])
         assert  abs(dist - neigh["dist"]) < 1e-8
         assert len(fp) == len(ps)  # Make sure we didn't add a point...
@@ -187,7 +187,7 @@ class TestFastPairs:
         assert len(fp) == len(ps)  # Size shouldn't change
         l = [(fp.dist(a, b), b) for a, b in zip(cycle([new]), ps)]
         res = min(l, key=itemgetter(0))
-        neigh = fp.find_neighbor(new)
+        neigh = fp._find_neighbor(new)  # Abusing fin_neighbor!
         assert abs(res[0] - neigh["dist"]) < 1e-8
         assert res[1] == neigh["neigh"]
 
