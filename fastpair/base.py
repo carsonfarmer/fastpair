@@ -34,7 +34,6 @@ References
 # Licensed under the MIT Licence (http://opensource.org/licenses/MIT).
 
 from __future__ import print_function, division, absolute_import
-
 from itertools import combinations, cycle
 from operator import itemgetter
 from collections import defaultdict
@@ -88,8 +87,8 @@ class FastPair(object):
         self.dist = dist
         self.merge = merge
         self.initialized = False  # Has the data-structure been initialized?
-        self.neighbors = _ddict(_adict)  # Dict of neighbor points and dists
-        # self.points = list()  # Internal point set; entries may be non-unique
+        self.neighbors = defaultdict(_adict)  # Dict of neighbor points and dists
+        self.points = list()  # Internal point set; entries may be non-unique
 
     def __add__(self, p):
         """Add a point and find its nearest neighbor.
@@ -294,7 +293,7 @@ class FastPair(object):
         >>> min(fp.sdist(point), key=itemgetter(0))
         """
         return ((self.dist(a, b), b) for a, b in
-                zip(_cycle([p]), self.points) if b != a)
+                zip(cycle([p]), self.points) if b != a)
 
 
 def _closest_pair_brute_force(pts, dst=default_dist):
@@ -307,7 +306,7 @@ def _closest_pair_brute_force(pts, dst=default_dist):
     for more efficient algorithms. This version is actually pretty fast due
     to its use of fast Python builtins.
     """
-    return min((dst(p1, p2), (p1, p2)) for p1, p2 in _combs(pts, r=2))
+    return min((dst(p1, p2), (p1, p2)) for p1, p2 in combinations(pts, r=2))
 
 def _closest_pair_divide_conquer(pts, dst=default_dist):
     """Compute closest pair of points using divide and conquer algorithm.
@@ -317,8 +316,8 @@ def _closest_pair_divide_conquer(pts, dst=default_dist):
     https://www.cs.iupui.edu/~xkzou/teaching/CS580/Divide-and-conquer-closestPair.ppt
     https://www.rosettacode.org/wiki/Closest-pair_problem#Python
     """
-    xp = sorted(pts, key=_getter(0))  # Sort by x
-    yp = sorted(pts, key=_getter(1))  # Sort by y
+    xp = sorted(pts, key=itemgetter(0))  # Sort by x
+    yp = sorted(pts, key=itemgetter(1))  # Sort by y
     return _divide_and_conquer(xp, yp)
 
 def _divide_and_conquer(xp, yp, dst=default_dist):
@@ -346,7 +345,7 @@ def _divide_and_conquer(xp, yp, dst=default_dist):
         closest = min(((dst(close[i], close[j]), (close[i], close[j]))
                        for i in range(num_close-1)
                        for j in range(i+1, min(i+8, num_close))),
-                      key=_getter(0))
+                      key=itemgetter(0))
         return (dm, pairm) if dm <= closest[0] else closest
     else:
         return dm, pairm
