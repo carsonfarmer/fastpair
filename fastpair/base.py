@@ -88,7 +88,7 @@ class FastPair(object):
         self.merge = merge
         self.initialized = False  # Has the data-structure been initialized?
         self.neighbors = defaultdict(_adict)  # Dict of neighbor points and dists
-        # self.points = list()  # Internal point set; entries may be non-unique
+        self.points = list()  # Internal point set; entries may be non-unique
 
     def __add__(self, p):
         """Add a point and find its nearest neighbor.
