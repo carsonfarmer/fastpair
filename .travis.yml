@@ -13,6 +13,7 @@ before_install:
   - pip install -U pip
 
 install:
+  - python setup.py install  >/dev/null
   - pip install -r requirements.txt
   - pip install -r recommended.txt
 
