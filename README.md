@@ -56,9 +56,7 @@ python setup.py install
 
 ## Testing
 
-[![Build Status](https://travis-ci.org/carsonfarmer/fastpair.svg?branch=master)](https://travis-ci.org/carsonfarmer/fastpair)
-
-[![Coverage Status](https://coveralls.io/repos/github/carsonfarmer/fastpair/badge.svg?branch=master)](https://coveralls.io/github/carsonfarmer/fastpair?branch=master)
+[![Build Status](https://travis-ci.org/carsonfarmer/fastpair.svg?branch=master)](https://travis-ci.org/carsonfarmer/fastpair)[![Coverage Status](https://coveralls.io/repos/github/carsonfarmer/fastpair/badge.svg?branch=master)](https://coveralls.io/github/carsonfarmer/fastpair?branch=master)
 
 `FastPair` comes with a <del>comprehensive</del> preliminary range
 of tests. To run the tests, you can use [`py.test`](http://pytest.org/latest/)
