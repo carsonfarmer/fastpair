@@ -103,7 +103,7 @@ class FastPair(object):
         """
         self.points.append(p)
         if self.initialized:
-            self.find_neighbor(p)
+            self._find_neighbor(p)
         elif len(self) >= self.min_points:
             self.build()
         return self
@@ -111,10 +111,11 @@ class FastPair(object):
     def __sub__(self, p):
         """Remove a point and update neighbors."""
         self.points.remove(p)
-        # We must update neighbors of points for which `p` had been nearest.
-        for q in self.points:
-            if self.neighbors[q].neigh == p:
-                res = self.find_neighbor(q)
+        if self.initialized:
+            # We must update neighbors of points for which `p` had been nearest.
+            for q in self.points:
+                if self.neighbors[q].neigh == p:
+                    res = self._find_neighbor(q)
         return self
 
     def __len__(self):
@@ -128,12 +129,18 @@ class FastPair(object):
     def __contains__(self, p):
         return p in self.points
 
+    def __iter__(self):
+        return iter(self.points)
+
     def build(self, points=None):
         """Build a FastPairs data-structure from a set of (new) points.
 
-        Here we use a conga line rather than calling `find_neighbor`
-        multiple times as it is more efficient. This method needs to be called
-        before querying the data-structure or adding/removing any new points.
+        Here we use a conga line rather than calling explicitly (re)building
+        the neighbors map multiple times as it is more efficient. This method
+        needs to be called _before_ querying the data-structure or adding/
+        removing any new points. Once it has been called, the internal
+        `initialized` flag will be set to True. Otherwise, simple brute-force
+        versions of queries and calculations will be used.
 
         Parameters
         ----------
@@ -160,8 +167,8 @@ class FastPair(object):
             self.neighbors[self.points[i]].neigh = self.points[nbr]
             self.points[nbr] = self.points[i + 1]
             self.points[i + 1] = self.neighbors[self.points[i]].neigh
-        # No more neighbors, terminate conga line
-        # We avoid using negative indexes... just 'cause for now!
+        # No more neighbors, terminate conga line.
+        # Last person on the line has no neigbors :(
         self.neighbors[self.points[np-1]].neigh = self.points[np-1]
         self.neighbors[self.points[np-1]].dist = float("inf")
         self.initialized = True
@@ -181,8 +188,8 @@ class FastPair(object):
         d = self.neighbors[a].dist
         for p in self.points:
             if self.neighbors[p].dist < d:
-                a = tuple(p)  # Update `a` and distance `d`
-                d = float(self.neighbors[p].dist)
+                a = p  # Update `a` and distance `d`
+                d = self.neighbors[p].dist
         b = self.neighbors[a].neigh
         return d, (a, b)
 
@@ -194,7 +201,7 @@ class FastPair(object):
         """Find closest pair using divide-and-conquer algorithm."""
         return _closest_pair_divide_conquer(self.points)
 
-    def find_neighbor(self, p):
+    def _find_neighbor(self, p):
         """Find and update nearest neighbor of a given point."""
         # If no neighbors available, set flag for `update_point` to find
         if len(self) < 2:
@@ -228,14 +235,16 @@ class FastPair(object):
         All distances to point have changed, we need to recompute all aspects
         of the data structure that may be affected. Note that although we
         completely recompute the neighbors of the original point (`old`), we
-        don't explicitly call `find_neighbor`, since that would double the
+        don't explicitly rebuild the neighbors map, since that would double the
         number of distance computations made by this routine. Also, like
-        deletion, we don't change any other point's neighbor to the updated
+        deletion, we don't change any _other_ point's neighbor to the updated
         point.
         """
         # Out with the old, in with the new...
         self.points.remove(old)
         self.points.append(new)
+        if not self.initialized:
+            return new
         del self.neighbors[old]
         self.neighbors[new].neigh = new  # Flag for not yet found any
         self.neighbors[new].dist = float("inf")
@@ -247,7 +256,7 @@ class FastPair(object):
                     self.neighbors[new].neigh = q
                 if self.neighbors[q].neigh == old:
                     if d > self.neighbors[q].dist:
-                        self.find_neighbor(q)
+                        self._find_neighbor(q)
                     else:
                         self.neighbors[q].neigh = new
                         self.neighbors[q].dist = d
@@ -262,13 +271,13 @@ class FastPair(object):
             self.neighbors[p].dist = d
             self.neighbors[p].neigh = q
         elif self.neighbors[p].neigh == q and d > self.neighbors[p].dist:
-            self.find_neighbor(p)
+            self._find_neighbor(p)
 
         if d < self.neighbors[q].dist:
             self.neighbors[q].dist = d
             self.neighbors[q].neigh = q
         elif self.neighbors[q].neigh == p and d > self.neighbors[q].dist:
-            self.find_neighbor(q)
+            self._find_neighbor(q)
         return d
 
     def sdist(self, p):
@@ -278,8 +287,8 @@ class FastPair(object):
         from the input point `p`. The resulting iterator returns tuples with
         the first item giving the distance, and the second item giving in
         neighbor point. The `min` of this iterator is essentially a brute-
-        force version of the `find_neighbor` method (assuming `itemgetter`
-        [or similar] is supplied as the `key` argument to `min`).
+        force 'nearest-neighbor' calculation. To do this, supply `itemgetter`
+        (or a lambda version) as the `key` argument to `min`.
 
         Examples
         --------
