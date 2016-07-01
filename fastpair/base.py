@@ -33,13 +33,11 @@ References
 # Copyright (c) 2002-2015, David Eppstein
 # Licensed under the MIT Licence (http://opensource.org/licenses/MIT).
 
-from __future__ import (print_function as _print_function,
-                        division as _division,
-                        absolute_import as _absolute_import)
+from __future__ import print_function, division, absolute_import
 
-from itertools import combinations as _combs, cycle as _cycle
-from operator import itemgetter as _getter
-from collections import defaultdict as _ddict
+from itertools import combinations, cycle
+from operator import itemgetter
+from collections import defaultdict
 import scipy.spatial.distance as dist
 from scipy import mean as _mean, array as _array
 
@@ -91,7 +89,7 @@ class FastPair(object):
         self.merge = merge
         self.initialized = False  # Has the data-structure been initialized?
         self.neighbors = _ddict(_adict)  # Dict of neighbor points and dists
-        self.points = list()  # Internal point set; entries may be non-unique
+        # self.points = list()  # Internal point set; entries may be non-unique
 
     def __add__(self, p):
         """Add a point and find its nearest neighbor.
