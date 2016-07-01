@@ -194,13 +194,9 @@ class FastPair(object):
         """Find closest pair using brute-force algorithm."""
         return _closest_pair_brute_force(self.points)
 
-    def closest_pair_divide_conquer(self):
-        """Find closest pair using divide-and-conquer algorithm."""
-        return _closest_pair_divide_conquer(self.points)
-
     def _find_neighbor(self, p):
         """Find and update nearest neighbor of a given point."""
-        # If no neighbors available, set flag for `update_point` to find
+        # If no neighbors available, set flag for `_update_point` to find
         if len(self) < 2:
             self.neighbors[p].neigh = p
             self.neighbors[p].dist = float("inf")
@@ -224,9 +220,9 @@ class FastPair(object):
         dist, (a, b) = self.closest_pair()
         c = self.merge(a, b)
         self -= b
-        return self.update_point(a, c)
+        return self._update_point(a, c)
 
-    def update_point(self, old, new):
+    def _update_point(self, old, new):
         """Update point location, neighbors, and distances.
 
         All distances to point have changed, we need to recompute all aspects
@@ -259,24 +255,6 @@ class FastPair(object):
                         self.neighbors[q].dist = d
         return dict(self.neighbors[new])
 
-    def update_dist(self, p, q):
-        """Single distance has changed, check if structures are ok."""
-        # This is rarely called for most applications I'm interested in.
-        # TODO: Decide if its worth keeping...?
-        d = self.dist(p, q)
-        if d < self.neighbors[p].dist:
-            self.neighbors[p].dist = d
-            self.neighbors[p].neigh = q
-        elif self.neighbors[p].neigh == q and d > self.neighbors[p].dist:
-            self._find_neighbor(p)
-
-        if d < self.neighbors[q].dist:
-            self.neighbors[q].dist = d
-            self.neighbors[q].neigh = q
-        elif self.neighbors[q].neigh == p and d > self.neighbors[q].dist:
-            self._find_neighbor(q)
-        return d
-
     def sdist(self, p):
         """Compute distances from input to all other points in data-structure.
 
@@ -307,45 +285,3 @@ def _closest_pair_brute_force(pts, dst=default_dist):
     to its use of fast Python builtins.
     """
     return min((dst(p1, p2), (p1, p2)) for p1, p2 in combinations(pts, r=2))
-
-def _closest_pair_divide_conquer(pts, dst=default_dist):
-    """Compute closest pair of points using divide and conquer algorithm.
-
-    References
-    ----------
-    https://www.cs.iupui.edu/~xkzou/teaching/CS580/Divide-and-conquer-closestPair.ppt
-    https://www.rosettacode.org/wiki/Closest-pair_problem#Python
-    """
-    xp = sorted(pts, key=itemgetter(0))  # Sort by x
-    yp = sorted(pts, key=itemgetter(1))  # Sort by y
-    return _divide_and_conquer(xp, yp)
-
-def _divide_and_conquer(xp, yp, dst=default_dist):
-    np = len(xp)
-    if np <= 3:
-        return _closest_pair_brute_force(xp, dst=dst)
-    Pl = xp[:np//2]
-    Pr = xp[np//2:]
-    Yl, Yr = [], []
-    divider = Pl[-1][0]
-    for p in yp:
-        if p[0] <= divider:
-            Yl.append(p)
-        else:
-            Yr.append(p)
-    dl, pairl = _divide_and_conquer(Pl, Yl)
-    dr, pairr = _divide_and_conquer(Pr, Yr)
-    dm, pairm = (dl, pairl) if dl < dr else (dr, pairr)
-    # Points within dm of divider sorted by Y coord
-    # We use abs here because we're only measuring distance in one direction
-    close = [p for p in yp  if abs(p[0] - divider) < dm]
-    num_close = len(close)
-    if num_close > 1:
-        # There is a proof that you only need compare a max of 7 next points
-        closest = min(((dst(close[i], close[j]), (close[i], close[j]))
-                       for i in range(num_close-1)
-                       for j in range(i+1, min(i+8, num_close))),
-                      key=itemgetter(0))
-        return (dm, pairm) if dm <= closest[0] else closest
-    else:
-        return dm, pairm

@@ -181,13 +181,13 @@ class TestFastPairs:
         assert len(fp) == len(ps)
         old = ps[0]  # Just grab the first point...
         new = rand_tuple(len(ps[0]))
-        res = fp.update_point(old, new)
+        res = fp._update_point(old, new)
         assert old not in fp
         assert new in fp
         assert len(fp) == len(ps)  # Size shouldn't change
         l = [(fp.dist(a, b), b) for a, b in zip(cycle([new]), ps)]
         res = min(l, key=itemgetter(0))
-        neigh = fp._find_neighbor(new)  # Abusing fin_neighbor!
+        neigh = fp.neighbors[new]
         assert abs(res[0] - neigh["dist"]) < 1e-8
         assert res[1] == neigh["neigh"]
 
@@ -201,7 +201,7 @@ class TestFastPairs:
             dist, (a, b) = fp1.closest_pair()
             new = interact(a, b)
             fp1 -= b  # Drop b
-            fp1.update_point(a, new)
+            fp1._update_point(a, new)
             fp2.merge_closest()
             n -= 1
         assert len(fp1) == len(fp2) == 1 # == len(fp2)
