@@ -10,4 +10,4 @@ Init module for FastPair.
 # Copyright (c) 2002-2015, David Eppstein
 # Licensed under the MIT Licence (http://opensource.org/licenses/MIT).
 
-from .base import FastPair, interact
+from .base import FastPair
