@@ -38,29 +38,22 @@ from itertools import combinations, cycle
 from operator import itemgetter
 from collections import defaultdict
 import scipy.spatial.distance as dist
-from scipy import mean as _mean, array as _array
-
-__all__ = ["interact", "FastPair", "dist", "default_dist"]
-
-default_dist = dist.euclidean
 
 
-def interact(u, v):
-    """Compute element-wise mean(s) from two arrays."""
-    return tuple(_mean(_array([u, v]), axis=0))
+__all__ = ["FastPair", "dist"]
 
 
-class _adict(dict):
+class attrdict(dict):
     """Simple dict with support for accessing elements as attributes."""
     def __init__(self, *args, **kwargs):
-        super(_adict, self).__init__(*args, **kwargs)
+        super(attrdict, self).__init__(*args, **kwargs)
         self.__dict__ = self
 
 
 class FastPair(object):
     """FastPair 'sketch' class.
     """
-    def __init__(self, min_points=10, dist=default_dist, merge=interact):
+    def __init__(self, min_points=10, dist=dist.euclidean):
         """Initialize an empty FastPair data-structure.
 
         Parameters
@@ -75,19 +68,11 @@ class FastPair(object):
             from `scipy.spatial.distance` will do the trick. By default, the
             Euclidean distance function is used. This function should play
             nicely with the `merge` function.
-        merge : function, default=scipy.mean
-            Can be any Python function that returns a single 'point' from two
-            input 'points'. By default, the element-wise mean(s) from two input
-            point arrays is used. If a user has a 'special' point class; for
-            example, one that represents cluster centroids, then the user can
-            specify a function that returns valid clusters. This function
-            should play nicely with the `dist` function.
         """
         self.min_points = min_points
         self.dist = dist
-        self.merge = merge
         self.initialized = False  # Has the data-structure been initialized?
-        self.neighbors = defaultdict(_adict)  # Dict of neighbor points and dists
+        self.neighbors = defaultdict(attrdict)  # Dict of neighbor points and dists
         self.points = list()  # Internal point set; entries may be non-unique
 
     def __add__(self, p):
@@ -128,6 +113,16 @@ class FastPair(object):
 
     def __iter__(self):
         return iter(self.points)
+
+    def __getitem__(self, item):
+        if not item in self:
+            raise KeyError("{} not found".format(item))
+        return self.neighbors[item]
+
+    def __setitem__(self, item, value):
+        if not item in self:
+            raise KeyError("{} not found".format(item))
+        self._update_point(item, value)
 
     def build(self, points=None):
         """Build a FastPairs data-structure from a set of (new) points.
@@ -179,7 +174,7 @@ class FastPair(object):
         """
         if len(self) < 2:
             raise ValueError("Must have `npoints >= 2` to form a pair.")
-        elif len(self) < self.min_points:
+        elif not self.initialized:
             return self.closest_pair_brute_force()
         a = self.points[0]  # Start with first point
         d = self.neighbors[a].dist
@@ -193,6 +188,24 @@ class FastPair(object):
     def closest_pair_brute_force(self):
         """Find closest pair using brute-force algorithm."""
         return _closest_pair_brute_force(self.points)
+
+    def sdist(self, p):
+        """Compute distances from input to all other points in data-structure.
+
+        This returns an iterator over all other points and their distance
+        from the input point `p`. The resulting iterator returns tuples with
+        the first item giving the distance, and the second item giving in
+        neighbor point. The `min` of this iterator is essentially a brute-
+        force 'nearest-neighbor' calculation. To do this, supply `itemgetter`
+        (or a lambda version) as the `key` argument to `min`.
+
+        Examples
+        --------
+        >>> fp = FastPair().build(points)
+        >>> min(fp.sdist(point), key=itemgetter(0))
+        """
+        return ((self.dist(a, b), b) for a, b in
+                zip(cycle([p]), self.points) if b != a)
 
     def _find_neighbor(self, p):
         """Find and update nearest neighbor of a given point."""
@@ -215,12 +228,6 @@ class FastPair(object):
                         self.neighbors[p].dist = d
                         self.neighbors[p].neigh = q
         return dict(self.neighbors[p])  # Return plain ol' dict
-
-    def merge_closest(self):
-        dist, (a, b) = self.closest_pair()
-        c = self.merge(a, b)
-        self -= b
-        return self._update_point(a, c)
 
     def _update_point(self, old, new):
         """Update point location, neighbors, and distances.
@@ -255,26 +262,14 @@ class FastPair(object):
                         self.neighbors[q].dist = d
         return dict(self.neighbors[new])
 
-    def sdist(self, p):
-        """Compute distances from input to all other points in data-structure.
-
-        This returns an iterator over all other points and their distance
-        from the input point `p`. The resulting iterator returns tuples with
-        the first item giving the distance, and the second item giving in
-        neighbor point. The `min` of this iterator is essentially a brute-
-        force 'nearest-neighbor' calculation. To do this, supply `itemgetter`
-        (or a lambda version) as the `key` argument to `min`.
-
-        Examples
-        --------
-        >>> fp = FastPair().build(points)
-        >>> min(fp.sdist(point), key=itemgetter(0))
-        """
-        return ((self.dist(a, b), b) for a, b in
-                zip(cycle([p]), self.points) if b != a)
+    # def merge_closest(self):
+    #     dist, (a, b) = self.closest_pair()
+    #     c = self.merge(a, b)
+    #     self -= b
+    #     return self._update_point(a, c)
 
 
-def _closest_pair_brute_force(pts, dst=default_dist):
+def _closest_pair_brute_force(pts, dst=dist.euclidean):
     """Compute closest pair of points using brute-force algorithm.
 
     Notes

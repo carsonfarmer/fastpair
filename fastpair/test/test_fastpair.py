@@ -17,7 +17,7 @@ from types import FunctionType
 from itertools import cycle, combinations, groupby
 import random
 import pytest
-from fastpair import FastPair, interact
+from fastpair import FastPair
 from math import isinf, isnan
 
 from scipy import mean, array, unique
@@ -38,13 +38,9 @@ def rand_tuple(dim=2):
     return tuple([random.random() for _ in range(dim)])
 
 
-def to_codebook(X, part):
-    """Calculates centroids according to flat cluster assignment."""
-    codebook = []
-    X = array(X)
-    for i in unique(part):
-        codebook.append(tuple(X[part == i].mean(0)))
-    return codebook
+def interact(u, v):
+    """Compute element-wise mean(s) from two arrays."""
+    return tuple(mean(array([u, v]), axis=0))
 
 
 # Setup fixtures
@@ -192,29 +188,23 @@ class TestFastPairs:
         assert res[1] == neigh["neigh"]
 
     def test_merge_closest(self):
-        # Still failing sometimes...
-        ps = PointSet()
-        fp1 = FastPair().build(ps)
-        fp2 = FastPair().build(ps)
+        # This needs to be 'fleshed' out more... lots of things to test here
+        random.seed(1234)
+        ps = PointSet(d=4)
+        fp = FastPair().build(ps)
+        # fp2 = FastPair().build(ps)
         n = len(ps)
         while n >= 2:
-            dist, (a, b) = fp1.closest_pair()
+            dist, (a, b) = fp.closest_pair()
             new = interact(a, b)
-            fp1 -= b  # Drop b
-            fp1._update_point(a, new)
-            fp2.merge_closest()
+            fp -= b  # Drop b
+            fp._update_point(a, new)
             n -= 1
-        assert len(fp1) == len(fp2) == 1 # == len(fp2)
-        assert fp1.points == fp2.points # == fp2.points
-        # Compare points
-        assert contains_same(list(fp1.neighbors.keys()), list(fp2.neighbors.keys()))
-        # Compare neighbors
-        assert contains_same([n["neigh"] for n in fp1.neighbors.values()],
-                             [n["neigh"] for n in fp2.neighbors.values()])
-        # Compare dists
-        assert all_close([n["dist"] for n in fp1.neighbors.values()],
-                         [n["dist"] for n in fp2.neighbors.values()])
+        assert len(fp) == 1 == n
+        points = [(0.69903599809571437, 0.52457534006594131,
+                   0.7614753848101149, 0.37011695654655385)]
+        assert all_close(fp.points[0], points[0])
         # Should have < 2 points now...
         with pytest.raises(ValueError):
-            fp1.closest_pair()
-            fp2.closest_pair()
+            fp.closest_pair()
+            # fp2.closest_pair()
