@@ -45,6 +45,7 @@ __all__ = ["FastPair", "dist"]
 
 class attrdict(dict):
     """Simple dict with support for accessing elements as attributes."""
+
     def __init__(self, *args, **kwargs):
         super(attrdict, self).__init__(*args, **kwargs)
         self.__dict__ = self
@@ -53,6 +54,7 @@ class attrdict(dict):
 class FastPair(object):
     """FastPair 'sketch' class.
     """
+
     def __init__(self, min_points=10, dist=dist.euclidean):
         """Initialize an empty FastPair data-structure.
 
@@ -145,11 +147,11 @@ class FastPair(object):
         np = len(self)
 
         # Go through and find all neighbors, placing then in a conga line
-        for i in range(np-1):
+        for i in range(np - 1):
             # Find neighbor to p[0] to start
             nbr = i + 1
             nbd = float("inf")
-            for j in range(i+1, np):
+            for j in range(i + 1, np):
                 d = self.dist(self.points[i], self.points[j])
                 if d < nbd:
                     nbr = j
@@ -161,8 +163,8 @@ class FastPair(object):
             self.points[i + 1] = self.neighbors[self.points[i]].neigh
         # No more neighbors, terminate conga line.
         # Last person on the line has no neigbors :(
-        self.neighbors[self.points[np-1]].neigh = self.points[np-1]
-        self.neighbors[self.points[np-1]].dist = float("inf")
+        self.neighbors[self.points[np - 1]].neigh = self.points[np - 1]
+        self.neighbors[self.points[np - 1]].dist = float("inf")
         self.initialized = True
         return self
 
@@ -187,7 +189,7 @@ class FastPair(object):
 
     def closest_pair_brute_force(self):
         """Find closest pair using brute-force algorithm."""
-        return _closest_pair_brute_force(self.points)
+        return _closest_pair_brute_force(self.points, self.dist)
 
     def sdist(self, p):
         """Compute distances from input to all other points in data-structure.
@@ -204,8 +206,7 @@ class FastPair(object):
         >>> fp = FastPair().build(points)
         >>> min(fp.sdist(point), key=itemgetter(0))
         """
-        return ((self.dist(a, b), b) for a, b in
-                zip(cycle([p]), self.points) if b != a)
+        return ((self.dist(a, b), b) for a, b in zip(cycle([p]), self.points) if b != a)
 
     def _find_neighbor(self, p):
         """Find and update nearest neighbor of a given point."""
@@ -221,7 +222,7 @@ class FastPair(object):
             self.neighbors[p].neigh = self.points[first_nbr]
             self.neighbors[p].dist = self.dist(p, self.neighbors[p].neigh)
             # Now test whether each other point is closer
-            for q in self.points[first_nbr+1:]:
+            for q in self.points[first_nbr + 1 :]:
                 if p != q:
                     d = self.dist(p, q)
                     if d < self.neighbors[p].dist:
