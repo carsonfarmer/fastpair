@@ -22,36 +22,7 @@ except ImportError:
 PACKAGE_NAME = "FastPair"
 DESCRIPTION = "FastPair: Data-structure for the dynamic closest-pair problem."
 
-MAJOR = 0
-MINOR = 1
-MICRO = 0
-ISRELEASED = False
-VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
-QUALIFIER = ''
-FULLVERSION = VERSION
-if not ISRELEASED:
-    FULLVERSION += '.dev'
-    try:
-        import subprocess
-        try:
-            pipe = subprocess.Popen(["git", "rev-parse", "--short", "HEAD"],
-                                    stdout=subprocess.PIPE).stdout
-        except OSError:
-            # msysgit compatibility
-            pipe = subprocess.Popen(
-                ["git.cmd", "describe", "HEAD"],
-                stdout=subprocess.PIPE).stdout
-        rev = pipe.read().strip()
-        # Makes distutils blow up on Python 2.7
-        if sys.version_info[0] >= 3:
-            rev = rev.decode('ascii')
-        FULLVERSION = '%d.%d.%d.dev-%s' % (MAJOR, MINOR, MICRO, rev)
-    except:
-        warnings.warn("Couldn't get git revision")
-else:
-    FULLVERSION += QUALIFIER
-
-setup(name=PACKAGE_NAME, version=FULLVERSION, description=DESCRIPTION,
+setup(name=PACKAGE_NAME, description=DESCRIPTION,
       license='MIT', author='Carson J. Q. Farmer',
       author_email='carsonfarmer@gmail.com',
       keywords="closest-pair points algorithm fastpair",
