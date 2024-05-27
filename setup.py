@@ -21,8 +21,9 @@ except ImportError:
 
 PACKAGE_NAME = "FastPair"
 DESCRIPTION = "FastPair: Data-structure for the dynamic closest-pair problem."
+FULLVERSION = "v0.1.0"
 
-setup(name=PACKAGE_NAME, description=DESCRIPTION,
+setup(name=PACKAGE_NAME, version=FULLVERSION, description=DESCRIPTION,
       license='MIT', author='Carson J. Q. Farmer',
       author_email='carsonfarmer@gmail.com',
       keywords="closest-pair points algorithm fastpair",
