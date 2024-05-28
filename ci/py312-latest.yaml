@@ -1,0 +1,10 @@
+name: py312-latest
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - scipy=1.11
+  # testing
+  - pytest
+  - pytest-cov
