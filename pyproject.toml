@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+
+[project]
+name = "fastpair"
+dynamic = ["version"]
+authors = [
+    { name = "Carson J. Q. Farmer", email = "carsonfarmer@gmail.com" },
+]
+
+#maintainers = [{ name = "" }]
+
+license = { text = "MIT" }
+description = "FastPair: Data-structure for the dynamic closest-pair problem."
+keywords = ["closest-pair points algorithm fastpair"]
+readme = "README.md"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: System :: Distributed Computing",
+]
+
+requires-python = ">=3.10"
+dependencies = [
+    "scipy>=1.10,<1.12",
+]
+
+[project.urls]
+Home = "https://github.com/carsonfarmer/fastpair/"
+Repository = "https://github.com/carsonfarmer/fastpair"
+
+[project.optional-dependencies]
+tests = [
+    "codecov",
+    "coverage",
+    "pytest",
+    "pytest-cov",
+    "setuptools_scm",
+]
+
+[tool.setuptools.packages.find]
+include = ["fastpair", "fastpair.*"]
+
+
+[tool.coverage.run]
+source = ["./fastpair"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "def __repr__",
+    "except ModuleNotFoundError:",
+    "except ImportError",
+    "if __name__ == .__main__.:",
+    "if self.debug:",
+    "pragma: no cover",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
+
+ignore_errors = true
+omit = ["fastpair/test/*"]
