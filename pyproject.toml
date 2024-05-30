@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "fastpair"
 dynamic = ["version"]
 authors = [
-    { name = "Carson J. Q. Farmer", email = "carsonfarmer@gmail.com" },
+    { name = "Carson J. Q. Farmer", email = "carson.farmer@gmail.com" },
 ]
 
 #maintainers = [{ name = "" }]
