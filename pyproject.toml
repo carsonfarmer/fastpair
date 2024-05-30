@@ -10,9 +10,9 @@ dynamic = ["version"]
 authors = [
     { name = "Carson J. Q. Farmer", email = "carson.farmer@gmail.com" },
 ]
-
-#maintainers = [{ name = "" }]
-
+maintainers = [
+    { name = "James D. Gaboardi", email = "jgaboardi@gmail.com" },
+]
 license = { text = "MIT" }
 description = "FastPair: Data-structure for the dynamic closest-pair problem."
 keywords = ["closest-pair points algorithm fastpair"]
