@@ -1,4 +1,0 @@
-# Examples and tests
-scipy
-pytest-cov
-coveralls

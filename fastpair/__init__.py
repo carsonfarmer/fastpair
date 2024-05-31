@@ -10,4 +10,10 @@ Init module for FastPair.
 # Copyright (c) 2002-2015, David Eppstein
 # Licensed under the MIT Licence (http://opensource.org/licenses/MIT).
 
+import contextlib
+from importlib.metadata import PackageNotFoundError, version
+
 from .base import FastPair
+
+with contextlib.suppress(PackageNotFoundError):
+    __version__ = version("fastpair")
