@@ -52,8 +52,7 @@ class attrdict(dict):
 
 
 class FastPair(object):
-    """FastPair 'sketch' class.
-    """
+    """FastPair 'sketch' class."""
 
     def __init__(self, min_points=10, dist=dist.euclidean):
         """Initialize an empty FastPair data-structure.

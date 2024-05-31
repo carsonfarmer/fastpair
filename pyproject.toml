@@ -46,12 +46,12 @@ tests = [
     "coverage",
     "pytest",
     "pytest-cov",
+    "ruff",
     "setuptools_scm",
 ]
 
 [tool.setuptools.packages.find]
 include = ["fastpair", "fastpair.*"]
-
 
 [tool.coverage.run]
 source = ["./fastpair"]
@@ -70,3 +70,6 @@ exclude_lines = [
 
 ignore_errors = true
 omit = ["fastpair/test/*"]
+
+[tool.ruff]
+line-length = 88
