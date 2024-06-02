@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """FastPair: Data-structure for the dynamic closest-pair problem.
 
 Init module for FastPair.

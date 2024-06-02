@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """FastPair: Data-structure for the dynamic closest-pair problem.
 
 This data-structure is based on the observation that the conga line data
@@ -33,25 +30,23 @@ References
 # Copyright (c) 2002-2015, David Eppstein
 # Licensed under the MIT Licence (http://opensource.org/licenses/MIT).
 
-from __future__ import print_function, division, absolute_import
-from itertools import combinations, cycle
-from operator import itemgetter
 from collections import defaultdict
-import scipy.spatial.distance as dist
+from itertools import combinations, cycle
 
+import scipy.spatial.distance as dist
 
 __all__ = ["FastPair", "dist"]
 
 
-class attrdict(dict):
+class AttrDict(dict):
     """Simple dict with support for accessing elements as attributes."""
 
     def __init__(self, *args, **kwargs):
-        super(attrdict, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.__dict__ = self
 
 
-class FastPair(object):
+class FastPair:
     """FastPair 'sketch' class."""
 
     def __init__(self, min_points=10, dist=dist.euclidean):
@@ -73,8 +68,8 @@ class FastPair(object):
         self.min_points = min_points
         self.dist = dist
         self.initialized = False  # Has the data-structure been initialized?
-        self.neighbors = defaultdict(attrdict)  # Dict of neighbor points and dists
-        self.points = list()  # Internal point set; entries may be non-unique
+        self.neighbors = defaultdict(AttrDict)  # Dict of neighbor points and dists
+        self.points = []  # Internal point set; entries may be non-unique
 
     def __add__(self, p):
         """Add a point and find its nearest neighbor.
@@ -98,7 +93,7 @@ class FastPair(object):
             # We must update neighbors of points for which `p` had been nearest.
             for q in self.points:
                 if self.neighbors[q].neigh == p:
-                    res = self._find_neighbor(q)
+                    self._find_neighbor(q)
         return self
 
     def __len__(self):
@@ -116,13 +111,13 @@ class FastPair(object):
         return iter(self.points)
 
     def __getitem__(self, item):
-        if not item in self:
-            raise KeyError("{} not found".format(item))
+        if item not in self:
+            raise KeyError(f"{item} not found")
         return self.neighbors[item]
 
     def __setitem__(self, item, value):
-        if not item in self:
-            raise KeyError("{} not found".format(item))
+        if item not in self:
+            raise KeyError(f"{item} not found")
         self._update_point(item, value)
 
     def build(self, points=None):
