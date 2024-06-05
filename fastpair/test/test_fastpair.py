@@ -279,7 +279,7 @@ class TestFastPairs:
 
         fp[ps[0]] = fp[ps[0]].neigh
         try:
-            fp[ps[0]].neigh  # noqa: B018
+            assert fp[ps[0]].neigh
         except KeyError as err:
             print(err)
 
