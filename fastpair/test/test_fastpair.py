@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """FastPair: Data-structure for the dynamic closest-pair problem.
 
 Testing module for FastPair.
@@ -10,18 +7,17 @@ Testing module for FastPair.
 # Copyright (c) 2002-2015, David Eppstein
 # Licensed under the MIT Licence (http://opensource.org/licenses/MIT).
 
-from __future__ import print_function, division, absolute_import
-
+import random
+from itertools import combinations, cycle
+from math import isinf, isnan
 from operator import itemgetter
 from types import FunctionType
-from itertools import cycle, combinations, groupby
-import random
-import pytest
-from fastpair import FastPair
-from math import isinf, isnan
 
-from scipy import mean, array, unique
 import numpy as np
+import pytest
+from scipy import array, mean
+
+from fastpair import FastPair
 
 
 def normalized_distance(_a, _b):
@@ -63,7 +59,7 @@ def all_close(s, t, tol=1e-8):
     # Ignores inf and nan values...
     return all(
         abs(a - b) < tol
-        for a, b in zip(s, t)
+        for a, b in zip(s, t, strict=True)
         if not isinf(a) and not isinf(b) and not isnan(a) and not isnan(b)
     )
 
@@ -79,7 +75,7 @@ def interact(u, v):
 
 # Setup fixtures
 @pytest.fixture(scope="module")
-def PointSet(n=50, d=10):
+def point_set(n=50, d=10):
     """Return numpy array of shape `n`x`d`."""
     # random.seed(8714)
     return [rand_tuple(d) for _ in range(n)]
@@ -96,15 +92,15 @@ class TestFastPairs:
         assert len(fp.points) == 0
         assert len(fp.neighbors) == 0
 
-    def test_build(self, PointSet):
-        ps = PointSet
+    def test_build(self, point_set):
+        ps = point_set
         fp = FastPair().build(ps)
         assert len(fp) == len(ps)
         assert len(fp.neighbors) == len(ps)
         assert fp.initialized is True
 
-    def test_add(self, PointSet):
-        ps = PointSet
+    def test_add(self, point_set):
+        ps = point_set
         fp = FastPair()
         for p in ps[:9]:
             fp += p
@@ -114,8 +110,8 @@ class TestFastPairs:
             fp += p
         assert fp.initialized is True
 
-    def test_sub(self, PointSet):
-        ps = PointSet
+    def test_sub(self, point_set):
+        ps = point_set
         fp = FastPair().build(ps)
         start = fp._find_neighbor(ps[-1])
         fp -= ps[-1]
@@ -127,22 +123,22 @@ class TestFastPairs:
         with pytest.raises(ValueError):
             fp -= rand_tuple(len(ps[0]))
 
-    def test_len(self, PointSet):
-        ps = PointSet
+    def test_len(self, point_set):
+        ps = point_set
         fp = FastPair()
         assert len(fp) == 0
         fp.build(ps)
         assert len(fp) == len(ps)
 
-    def test_contains(self, PointSet):
-        ps = PointSet
+    def test_contains(self, point_set):
+        ps = point_set
         fp = FastPair()
         assert ps[0] not in fp
         fp.build(ps)
         assert ps[0] in fp
 
-    def test_call_and_closest_pair(self, PointSet):
-        ps = PointSet
+    def test_call_and_closest_pair(self, point_set):
+        ps = point_set
         fp = FastPair().build(ps)
         cp = fp.closest_pair()
         bf = fp.closest_pair_brute_force()
@@ -150,8 +146,8 @@ class TestFastPairs:
         assert abs(cp[0] - bf[0]) < 1e-8
         assert cp[1] == bf[1]
 
-    def test_all_closest_pairs(self, PointSet):
-        ps = PointSet
+    def test_all_closest_pairs(self, point_set):
+        ps = point_set
         fp = FastPair().build(ps)
         cp = fp.closest_pair()
         bf = fp.closest_pair_brute_force()  # Ordering should be the same
@@ -168,24 +164,24 @@ class TestFastPairs:
         # Ordering may be different, but both should be in there
         # assert dc[1][0] in cp[1] and dc[1][1] in cp[1]
 
-    def test_find_neighbor_and_sdist(self, PointSet):
-        ps = PointSet
+    def test_find_neighbor_and_sdist(self, point_set):
+        ps = point_set
         fp = FastPair().build(ps)
         rando = rand_tuple(len(ps[0]))
         neigh = fp._find_neighbor(rando)  # Abusing find_neighbor!
         dist = fp.dist(rando, neigh["neigh"])
         assert abs(dist - neigh["dist"]) < 1e-8
         assert len(fp) == len(ps)  # Make sure we didn't add a point...
-        l = [(fp.dist(a, b), b) for a, b in zip(cycle([rando]), ps)]
-        res = min(l, key=itemgetter(0))
+        l_ = [(fp.dist(a, b), b) for a, b in zip(cycle([rando]), ps)]
+        res = min(l_, key=itemgetter(0))
         assert abs(res[0] - neigh["dist"]) < 1e-8
         assert res[1] == neigh["neigh"]
         res = min(fp.sdist(rando), key=itemgetter(0))
         assert abs(neigh["dist"] - res[0]) < 1e-8
         assert neigh["neigh"] == res[1]
 
-    def test_cluster(self, PointSet):
-        ps = PointSet
+    def test_cluster(self, point_set):
+        ps = point_set
         fp = FastPair().build(ps)
         for i in range(len(fp) - 1):
             # Version one
@@ -209,9 +205,9 @@ class TestFastPairs:
             assert contains_same(fp.points, ps)
         assert len(fp.points) == len(ps) == 1
 
-    def test_update_point(self, PointSet):
+    def test_update_point(self, point_set):
         # Still failing sometimes...
-        ps = PointSet
+        ps = point_set
         fp = FastPair().build(ps)
         assert len(fp) == len(ps)
         old = ps[0]  # Just grab the first point...
@@ -220,9 +216,9 @@ class TestFastPairs:
         assert old not in fp
         assert new in fp
         assert len(fp) == len(ps)  # Size shouldn't change
-        l = [(fp.dist(a, b), b) for a, b in zip(cycle([new]), ps)]
-        res = min(l, key=itemgetter(0))
-        neigh = fp.neighbors[new]
+        l_ = [(fp.dist(a, b), b) for a, b in zip(cycle([new]), ps)]
+        res = min(l_, key=itemgetter(0))  # noqa: F841
+        neigh = fp.neighbors[new]  # noqa: F841
         # assert abs(res[0] - neigh["dist"]) < 1e-8
         # assert res[1] == neigh["neigh"]
 
@@ -267,8 +263,8 @@ class TestFastPairs:
         assert abs(cp[0] - bf[0]) < 1e-8
         assert cp[1] == bf[1]
 
-    def test_iter(self, PointSet):
-        ps = PointSet
+    def test_iter(self, point_set):
+        ps = point_set
         fp = FastPair().build(ps)
         assert fp.min_points == 10
         assert isinstance(fp.dist, FunctionType)
@@ -277,23 +273,23 @@ class TestFastPairs:
         assert fp[ps[0]].neigh in set(ps)
 
         try:
-            myitem = fp[(2, 3, 4)]
+            fp[(2, 3, 4)]
         except KeyError as err:
             print(err)
 
         fp[ps[0]] = fp[ps[0]].neigh
         try:
-            fp[(2, 3, 4)] = fp[ps[0]].neigh
+            assert fp[ps[0]].neigh
         except KeyError as err:
             print(err)
 
-    def test_update_point_less_points(self, PointSet):
-        ps = PointSet
+    def test_update_point_less_points(self, point_set):
+        ps = point_set
         fp = FastPair()
         for p in ps[:9]:
             fp += p
         assert fp.initialized is False
         old = ps[0]  # Just grab the first point...
         new = rand_tuple(len(ps[0]))
-        res = fp._update_point(old, new)
+        fp._update_point(old, new)
         assert len(fp) == 1
