@@ -30,13 +30,13 @@
             ci/py312-latest.yaml,
             ci/py312-dev.yaml,
          ]
-       include:
-         - environment-file: ci/py312-latest.yaml
-           os: macos-latest
-         - environment-file: ci/py312-latest.yaml
-           os: macos-14 # Apple Silicon
-         - environment-file: ci/py312-latest.yaml
-           os: windows-latest
+         include:
+           - environment-file: ci/py312-latest.yaml
+             os: macos-latest
+           - environment-file: ci/py312-latest.yaml
+             os: macos-14 # Apple Silicon
+           - environment-file: ci/py312-latest.yaml
+             os: windows-latest
        fail-fast: false
 
      defaults:
