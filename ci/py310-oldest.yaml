@@ -1,9 +1,10 @@
-name: py312-latest
+name: py310-oldest
 channels:
   - conda-forge
 dependencies:
-  - python=3.12
-  - scipy
+  - python=3.10
+  - numpy=1.24
+  - scipy=1.10
   # testing
   - pytest
   - pytest-cov

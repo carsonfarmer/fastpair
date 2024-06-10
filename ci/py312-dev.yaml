@@ -1,0 +1,16 @@
+name: py312-dev
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  # testing
+  - pytest
+  - pytest-cov
+  - pip:
+    # nightly builds
+    - --pre \
+      --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple  \
+      --extra-index-url https://pypi.org/simple
+    - numpy
+    - scipy

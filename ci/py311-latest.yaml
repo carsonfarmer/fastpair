@@ -1,8 +1,8 @@
-name: py312-latest
+name: py311-latest
 channels:
   - conda-forge
 dependencies:
-  - python=3.12
+  - python=3.11
   - scipy
   # testing
   - pytest

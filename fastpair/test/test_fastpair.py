@@ -15,7 +15,6 @@ from types import FunctionType
 
 import numpy as np
 import pytest
-from scipy import array, mean
 
 from fastpair import FastPair
 
@@ -70,7 +69,7 @@ def rand_tuple(dim=2):
 
 def interact(u, v):
     """Compute element-wise mean(s) from two arrays."""
-    return tuple(mean(array([u, v]), axis=0))
+    return tuple(np.mean(np.array([u, v]), axis=0))
 
 
 # Setup fixtures
