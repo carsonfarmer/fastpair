@@ -45,6 +45,7 @@ Repository = "https://github.com/carsonfarmer/fastpair"
 tests = [
     "codecov",
     "coverage",
+    "pre-commit",
     "pytest",
     "pytest-cov",
     "ruff",
