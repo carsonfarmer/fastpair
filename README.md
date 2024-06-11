@@ -4,71 +4,63 @@ Data-structure for the dynamic closest-pair problem.
 
 ## Overview
 
-This project is an implementation of the FastPair dynamic closest-pair
-data-structure described in David Eppstein's [Fast Hierarchical Clustering
-and Other Applications of Dynamic Closest Pairs](http://dl.acm.org/citation.cfm?id=351829).
-The data-structure is based on the observation that the [conga line data-
-structure](https://www.ics.uci.edu/~eppstein/projects/pairs/Methods/), in
-practice, does better the more subsets you give to it: even
-though the worst case time for $k$ subsets is $O(nk\log{(n/k)})$, that worst
-case seems much harder to reach than the nearest neighbor algorithm.
+![tag](https://img.shields.io/github/v/release/carsonfarmer/fastpair?include_prereleases&sort=semver)
 
-In the limit of arbitrarily many subsets, each new addition or point moved
-by a deletion will be in a singleton subset, and the algorithm will
-differ from nearest neighbors in only a couple of ways: (1) when we
-create the initial data structure, we use a conga line rather than
+This project is an implementation of the FastPair dynamic closest-pair data-structure described in David Eppstein's [Fast Hierarchical Clustering and Other Applications of Dynamic Closest Pairs](http://dl.acm.org/citation.cfm?id=351829).
+The data-structure is based on the observation that the [conga line data-structure](https://www.ics.uci.edu/~eppstein/projects/pairs/Methods/), in practice, does better the more subsets you give to it: even though the worst case time for $k$ subsets is $O(nk\log{(n/k)})$, that worst case seems much harder to reach than the nearest neighbor algorithm.
+
+In the limit of arbitrarily many subsets, each new addition or point moved by a deletion will be in a singleton subset, and the algorithm will differ from nearest neighbors in only a couple of ways:
+
+1. When we create the initial data structure, we use a conga line rather than
 all nearest neighbors, to keep the in-degree of each point low, and
-(2) when we insert a point, we don't bother updating other points' neighbors.
+2. When we insert a point, we don't bother updating other points' neighbors.
 
-Total space: $20n$ bytes (could be reduced to 4n at some cost in update time).
-Time per insertion or single distance update: $O(n)$.
-Time per deletion or point update: $O(n)$ expected, $O(n^2)$ worst case.
-Time per closest pair: $O(n)$.
+**Total space:** $20n$ bytes (could be reduced to $4n$ at some cost in update time).
 
-This `Python` version of the algorithm combines ideas and code from the
-[closest-pair data structure testbed
-(C++)](https://www.ics.uci.edu/~eppstein/projects/pairs/Source/testbed/)
-developed around a
-[series of papers](https://www.ics.uci.edu/~eppstein/projects/pairs/Papers/)
-by Eppstein *et al.*
+**Time per insertion or single distance update:** $O(n)$.
+
+**Time per deletion or point update:** $O(n)$ expected, $O(n^2)$ worst case.
+
+**Time per closest pair:** $O(n)$.
+
+This `Python` version of the algorithm combines ideas and code from the [closest-pair data structure testbed (C++)](https://www.ics.uci.edu/~eppstein/projects/pairs/Source/testbed/) developed around a [series of papers](https://www.ics.uci.edu/~eppstein/projects/pairs/Papers/) by Eppstein *et al.*
 
 ## Installation
 
-`FastPairs` has not yet been uploaded to [PyPi](https://pypi.python.org/pypi),
-as we are currently at the 'pre-release' stage\*. Having said that you should be
-able to install it via `pip` directly from the GitHub repository with:
+`FastPairs` has not yet been uploaded to [PyPi](https://pypi.python.org/pypi), as we are currently at the 'pre-release' stage\*. Having said that you should be able to install it via `pip` directly from the GitHub repository with:
 
 ```bash
 pip install git+git://github.com/carsonfarmer/fastpair.git
 ```
 
-You can also install `FastPair` by cloning the
-[GitHub repository](https://github.com/carsonfarmer/fastpair) and using the
-setup script:
+You can also install `FastPair` by cloning the [GitHub repository](https://github.com/carsonfarmer/fastpair) and using the setup script:
 
 ```bash
 git clone https://github.com/carsonfarmer/fastpair.git
 cd fastpair
-python setup.py install
+pip install .
 ```
 
 \* *This means the API is not set, and subject to crazy changes at any time!*
 
 ## Testing
 
-[![Build Status](https://travis-ci.org/carsonfarmer/fastpair.svg?branch=master)](https://travis-ci.org/carsonfarmer/fastpair)[![Coverage Status](https://coveralls.io/repos/github/carsonfarmer/fastpair/badge.svg?branch=master)](https://coveralls.io/github/carsonfarmer/fastpair?branch=master)
+[![Continuous Integration](https://github.com/carsonfarmer/fastpair/actions/workflows/testing.yml/badge.svg)](https://github.com/carsonfarmer/fastpair/actions/workflows/testing.yml)
+[![codecov](https://codecov.io/gh/carsonfarmer/fastpair/branch/main/graph/badge.svg)](https://codecov.io/gh/carsonfarmer/fastpair)
 
-`FastPair` comes with a <del>comprehensive</del> preliminary range
-of tests. To run the tests, you can use [`py.test`](http://pytest.org/latest/)
-(maybe also `nosetests`?), which can be installed via `pip` using the
-`recommended.txt` file (note, this will also install `numpy`, `scipy`,
-`matplotlib`, and `IPython` which are all great and useful for
-tests and examples). So far testing has been done with `CPython` 2.7 and 3.4.
+`FastPair` comes with a <del>comprehensive</del> preliminary range of tests. To run tests, install as an editable, development package:
 
 ```bash
-pip install -r recommended.txt
-py.test fastpair
+pip install -e .[tests]
 ```
+
+This will install `fastpair` itself, its functional dependencies, and the testing/development dependencies. Tests can be run with [`pytest`](http://pytest.org/latest/) as follows:
+
+```bash
+pytest -v fastpair --cov fastpair
+```
+
+Currently `fastpair` is tested against Python 3.{10,11,12}.
 
 ## Features
 
@@ -84,9 +76,8 @@ def rand_tuple(dim=2):
 
 ### Basics
 
-The simplest way to use a `FastPair` data-structure is to initialize one
-and then update it with data points (via the `+=` operator). In this first example, we create a sequence of $50 \times 10$ uniform random points and
-add them to a `FastPair` object:
+The simplest way to use a `FastPair` data-structure is to initialize one and then update it with data points (via the `+=` operator).
+In this first example, we create a sequence of $50 \times 10$ uniform random points and add them to a `FastPair` object:
 
 ```python
 points = [rand_tuple(10) for _ in range(50)]
@@ -111,11 +102,7 @@ fp.closest_pair()
 fp.closest_pair_brute_force()
 ```
 
-`FastPair` has several useful properties and methods, including checking the
-size of the data-structure (i.e., how many points are currently stored),
-testing for containment of a given point, various methods for computing the
-closest pair, finding the neighbor of a given point, computing multiple
-distances at once, and even merging points (clusters):
+`FastPair` has several useful properties and methods, including checking the size of the data-structure (i.e., how many points are currently stored), testing for containment of a given point, various methods for computing the closest pair, finding the neighbor of a given point, computing multiple distances at once, and even merging points (clusters):
 
 ```python
 len(fp)
@@ -127,8 +114,7 @@ neigh = fp.find_neighbor(rando)  # Neighbor of 'outside' point
 fp.sdist(rando)  # Compute distances from rando to all points in fp
 ```
 
-To illustrate the `merge`ing methods, here is a simple example of hierarchical
-clustering, treating `points` as the 'centroids' of various clusters:
+To illustrate the `merge`ing methods, here is a simple example of hierarchical clustering, treating `points` as the 'centroids' of various clusters:
 
 ```python
 for i in range(len(fp)-1):
@@ -143,8 +129,7 @@ for i in range(len(fp)-1):
 len(fp)  # 1
 ```
 
-Finally, plotting should be pretty obvious to those familiar with `matplotlib`
-(or other `Python` plotting facilities).
+Finally, plotting should be pretty obvious to those familiar with `matplotlib` (or other `Python` plotting facilities).
 
 ```python
 import matplotlib.pyplot as plt
