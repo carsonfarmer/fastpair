@@ -51,6 +51,14 @@ tests = [
     "ruff",
     "setuptools_scm",
 ]
+notebooks = [
+    "jupyterlab",
+    "matplotlib",
+    "watermark"
+]
+all = [
+    "fastpair[tests,notebooks]"
+]
 
 [tool.setuptools.packages.find]
 include = ["fastpair", "fastpair.*"]
@@ -76,6 +84,10 @@ omit = ["fastpair/test/*"]
 [tool.ruff]
 line-length = 88
 lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
+include = [
+    "*.py",
+    "*.ipynb",
+]
 
 [tool.ruff.lint.per-file-ignores]
  "*__init__.py" = [
