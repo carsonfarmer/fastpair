@@ -11,8 +11,7 @@ The data-structure is based on the observation that the [conga line data-structu
 
 In the limit of arbitrarily many subsets, each new addition or point moved by a deletion will be in a singleton subset, and the algorithm will differ from nearest neighbors in only a couple of ways:
 
-1. When we create the initial data structure, we use a conga line rather than
-all nearest neighbors, to keep the in-degree of each point low, and
+1. When we create the initial data structure, we use a conga line rather than all nearest neighbors, to keep the in-degree of each point low, and
 2. When we insert a point, we don't bother updating other points' neighbors.
 
 <table>
@@ -32,7 +31,7 @@ all nearest neighbors, to keep the in-degree of each point low, and
     <td>$O(n)$ expected, $O(n^2)$ worst case</td>
   </tr>
  <tr>
-    <td><i>TTime per closest pair</i></td>
+    <td><i>Time per closest pair</i></td>
     <td>$O(n)$</td>
   </tr>
 </table>
