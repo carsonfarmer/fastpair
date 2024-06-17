@@ -31,11 +31,7 @@ In the limit of arbitrarily many subsets, each new addition or point moved by a 
     <td>$O(n)$ expected, $O(n^2)$ worst case</td>
   </tr>
  <tr>
-<<<<<<< HEAD
     <td><i>Time per closest pair</i></td>
-=======
-    <td><i>TTime per closest pair</i></td>
->>>>>>> main
     <td>$O(n)$</td>
   </tr>
 </table>
