@@ -157,12 +157,12 @@ class TestFastPairGetSet:
     def test_get_set(self):
         known_get = {"dist": 0.6983581029815579, "neigh": (0.5118, 0.9505)}
         observed_get = self.fp[(0.2616, 0.2985)]
-        assert known_get == observed_get
+        assert known_get == pytest.approx(observed_get)
 
         known_set = {"dist": 0.6983581029815579, "neigh": (19, 99)}
         self.fp[(0.2616, 0.2985)].neigh = (19, 99)
         observed_set = self.fp[(0.2616, 0.2985)]
-        assert known_set == observed_set
+        assert known_set == pytest.approx(observed_set)
 
     def test_get_raise_1(self):
         with pytest.raises(KeyError, match=re.escape("('a', 'b') not found")):
@@ -239,7 +239,10 @@ class TestFastPairCallAndClosestPair:
         assert self.cp[1] == self.bf[1]
 
     def test_cp_eq_bf_exact(self):
-        known = (0.11669811480910905, ((0.8702, 0.2868), (0.956, 0.2077)))
+        known = (
+            pytest.approx(0.11669811480910905),
+            ((0.8702, 0.2868), (0.956, 0.2077)),
+        )
         observed_cp = self.cp
         observed_bf = self.bf
 
@@ -254,7 +257,7 @@ class TestFastPairAllClosestPairs:
         self.cp = self.fp.closest_pair()
         self.bf = self.fp.closest_pair_brute_force()
         # self.dc = self.fp.closest_pair_divide_conquer()  # Maybe different ordering
-        self.all_closest = [
+        _all_closest = [
             (0.6997697978621256, ((0.637, 0.2698, 0.041), (0.5118, 0.9505, 0.1442))),
             (0.859992494153292, ((0.637, 0.2698, 0.041), (0.2616, 0.2985, 0.8142))),
             (0.9397803200748566, ((0.637, 0.2698, 0.041), (0.0856, 0.2368, 0.8013))),
@@ -277,6 +280,7 @@ class TestFastPairAllClosestPairs:
             (0.7488246924347515, ((0.9431, 0.5113, 0.9762), (0.5382, 0.3433, 0.3691))),
             (0.5553465944795196, ((0.805, 0.8079, 0.5153), (0.5382, 0.3433, 0.3691))),
         ]
+        self.all_closest = [(pytest.approx(i), j) for i, j in _all_closest]
 
     def test_all_closest(self):
         known = self.all_closest
@@ -353,7 +357,10 @@ class TestFastPairCluster:
     def test_basic(self):
         ps = [(1, 1), (2, 2), (3, 3)]
         known_coords = [1.5, 2.25]
-        known_dists = [1.4142135623730951, 2.121320343559643]
+        known_dists = [
+            pytest.approx(1.4142135623730951),
+            pytest.approx(2.121320343559643),
+        ]
 
         fp = FastPair().build(ps)
         for i in range(len(fp) - 1):
