@@ -1,31 +1,3 @@
-"""FastPair: Data-structure for the dynamic closest-pair problem.
-
-This data-structure is based on the observation that the conga line data
-structure, in practice, does better the more subsets you give to it: even
-though the worst case time for k subsets is O(nk log (n/k)), that worst case
-seems much harder to reach than the nearest neighbor algorithm.
-
-In the limit of arbitrarily many subsets, each new addition or point moved
-by a deletion will be in a singleton subset, and the algorithm will
-differ from nearest neighbors in only a couple of ways: (1) when we
-create the initial data structure, we use a conga line rather than
-all nearest neighbors, to keep the indegree of each point low, and
-(2) when we insert a point, we don't bother updating other points'
-neighbors.
-
-Notes
------
-Total space: 20n bytes. (Could be reduced to 4n at some cost in update time.)
-Time per insertion or single distance update: O(n)
-Time per deletion or point update: O(n) expected, O(n^2) worst case
-Time per closest pair: O(n)
-
-References
-----------
-[1] Eppstein, David: Fast hierarchical clustering and other applications of
-    dynamic closest pairs. Journal of Experimental Algorithmics 5 (2000) 1.
-"""
-
 # Copyright (c) 2016, Carson J. Q. Farmer <carsonfarmer@gmail.com>
 # Copyright (c) 2002-2015, David Eppstein
 # Licensed under the MIT Licence (http://opensource.org/licenses/MIT).
@@ -47,7 +19,36 @@ class AttrDict(dict):
 
 
 class FastPair:
-    """FastPair 'sketch' class."""
+    """FastPair: Data-structure for the dynamic closest-pair problem.
+
+    This data-structure is based on the observation that the conga line data
+    structure, in practice, does better the more subsets you give to it: even
+    though the worst case time for :math:`k` subsets is :math:`O(nk log (n/k))`,
+    that worst case seems much harder to reach than the nearest neighbor algorithm.
+
+    In the limit of arbitrarily many subsets, each new addition or point moved
+    by a deletion will be in a singleton subset, and the algorithm will
+    differ from nearest neighbors in only a couple of ways:
+
+        1. when we create the initial data structure, we use a conga line rather than
+            all nearest neighbors, to keep the indegree of each point low, and
+        2. when we insert a point, we don't bother updating other points' neighbors.
+
+    Notes
+    -----
+    * Total space: :math:`20n` bytes, which could be reduced to
+        :math:`4n` at some cost in update time.
+    * Time per insertion or single distance update: :math:`O(n)`
+    * Time per deletion or point update: :math:`O(n)` expected,
+        :math:`O(n^2)` worst case
+    * Time per closest pair: :math:`O(n)`
+
+    References
+    ----------
+    [1] Eppstein, David: Fast hierarchical clustering and other applications of
+        dynamic closest pairs. Journal of Experimental Algorithmics 5 (2000) 1.
+        https://doi.org/10.1145/351827.351829
+    """
 
     def __init__(self, min_points=10, dist=dist.euclidean):
         """Initialize an empty FastPair data-structure.
