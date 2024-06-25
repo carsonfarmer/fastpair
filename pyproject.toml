@@ -79,7 +79,7 @@ exclude_lines = [
 ]
 
 ignore_errors = true
-omit = ["fastpair/test/*"]
+omit = ["fastpair/tests/*"]
 
 [tool.ruff]
 line-length = 88
