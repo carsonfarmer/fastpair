@@ -2,10 +2,20 @@
 # Copyright (c) 2002-2015, David Eppstein
 # Licensed under the MIT Licence (http://opensource.org/licenses/MIT).
 
+import sys
 from collections import defaultdict
 from collections.abc import Callable, Generator, Iterable
 from itertools import combinations, cycle
-from typing import Annotated, Self, TypeAlias, TypedDict, TypeVar
+from typing import Annotated, TypeAlias, TypedDict, TypeVar
+
+################################################################
+# See GH#73 -- remove once Python 3.11 is minimum
+if sys.version_info.minor < 11:
+    from typing_extensions import Self
+else:
+    from typing import Self
+################################################################
+
 
 import numpy
 import scipy.spatial.distance as dist
