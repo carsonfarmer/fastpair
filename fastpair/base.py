@@ -165,6 +165,23 @@ class FastPair:
 
         >>> fp.closest_pair()
         (np.float64(2.23606797749979), ((1, 0), (2, 2)))
+
+        The default distance metric is ``scipy.spatial.distance.euclidean``.
+        Let's rebuild the ``FastPair`` with another metric. Many of the
+        distance functions available via ``scipy.spatial.distance`` can used.
+        Here we'll try ``cityblock``, which Manhattan distance.
+
+        >>> from scipy.spatial import distance
+        >>> fp = fastpair.FastPair(min_points=3, dist=distance.cityblock)
+        >>> fp.build(points_2d)
+        <FastPair[min_points=3, dist=cityblock]
+         Current state: initialized with 3 2D points>
+
+        While the closet pair remains the same, the distance between the
+        pair has increased with the new distance function.
+
+        >>> fp.closest_pair()
+        (np.int64(2), ((1, 1), (2, 2)))
         """
 
         self.min_points = min_points
@@ -253,6 +270,28 @@ class FastPair:
             to be added to the point set, prior to computing the conga line
             and main ``FastPair`` data structure. All objects in ``points``
             **must** have equivalent dimensions.
+
+        Examples
+        --------
+
+        Initialize and build the data structure 300 equally-spaced 2D points.
+
+        >>> import fastpair
+        >>> fp = fastpair.FastPair().build([(i, 1) for i in range(300)])
+        >>> fp
+        <FastPair[min_points=10, dist=euclidean]
+         Current state: initialized with 300 2D points>
+
+        Ensure all neighbor distances are exactly 1.0 (except the last point
+        which has no conga-style neighbor).
+
+        >>> all([fp.neighbors[i]["dist"] == 1.0 for i in fp.points[:-1]])
+        True
+
+        Since the last point has no neighbors, its distance is assigned as ``inf``.
+
+        >>> fp.neighbors[fp.points[-1]]["dist"]
+        inf
         """
         if points is not None:
             self.points += list(points)
@@ -285,6 +324,21 @@ class FastPair:
 
         If ``npoints`` is less than ``min_points``, a brute-force version
         of the closest pair algorithm is used.
+
+        Examples
+        --------
+        Create and build the data structure with default values.
+
+        >>> import fastpair
+        >>> fp = fastpair.FastPair(min_points=3).build(((1, 1), (2, 2), (4, 4)))
+        >>> fp
+        <FastPair[min_points=3, dist=euclidean]
+         Current state: initialized with 3 2D points>
+
+        Query closest pair.
+
+        >>> fp.closest_pair()
+        (np.float64(1.4142135623730951), ((1, 1), (2, 2)))
         """
         npoints = len(self)
         if npoints < 2:

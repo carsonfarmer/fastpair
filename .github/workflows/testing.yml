@@ -60,7 +60,11 @@
 
        - name: environment info
          run: "micromamba info && micromamba list"
-       
+
+       - name: run mypy # may not even need to do this since we have configured pre-commit
+         run: |
+           mypy
+
        - name: run tests
          run: |
            pytest \
@@ -71,7 +75,8 @@
            --cov fastpair \
            --cov-append \
            --cov-report term-missing \
-           --cov-report xml .
+           --cov-report xml . \
+           --doctest-modules
        
        - name: codecov
          uses: codecov/codecov-action@v4
