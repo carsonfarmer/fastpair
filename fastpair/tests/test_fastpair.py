@@ -11,6 +11,7 @@ import re
 from itertools import combinations, cycle
 from operator import itemgetter
 from types import FunctionType
+from typing import Any
 
 import numpy
 import pytest
@@ -18,7 +19,7 @@ import pytest
 from fastpair import FastPair
 
 
-def normalized_distance(_a: numpy.array, _b: numpy.array) -> float:
+def normalized_distance(_a: numpy.ndarray, _b: numpy.ndarray) -> numpy.floating[Any]:
     """Compute the normalized distance between 2 arrays."""
     b = _b.astype(int)
     a = _a.astype(int)
@@ -28,7 +29,7 @@ def normalized_distance(_a: numpy.array, _b: numpy.array) -> float:
     return norm_diff / (norm1 + norm2)
 
 
-def image_distance(image1: tuple, image2: tuple) -> float:
+def image_distance(image1: tuple, image2: tuple) -> numpy.floating[Any]:
     """Custom distance metric."""
     (sig1, _) = image1
     (sig2, _) = image2
@@ -37,9 +38,8 @@ def image_distance(image1: tuple, image2: tuple) -> float:
     return normalized_distance(sig1, sig2)
 
 
-def contains_same(s: list, t: list) -> bool:
-    """Determine if 2 lists contain the same (set-theoretic) elements."""
-    s, t = set(s), set(t)
+def contains_same(s: set, t: set) -> bool:
+    """Determine if 2 set[list] objects contain the same (set-theoretic) elements."""
     return s >= t and s <= t
 
 
@@ -386,7 +386,7 @@ class TestFastPairCluster:
             ps.remove(e)
             ps.remove(f)
             ps.append(g)
-            assert contains_same(fp.points, ps)
+            assert contains_same(set(fp.points), set(ps))
 
         assert len(fp.points) == len(ps) == 1
 
@@ -414,7 +414,7 @@ class TestFastPairCluster:
             ps.remove(e)
             ps.remove(f)
             ps.append(g)
-            assert contains_same(fp.points, ps)
+            assert contains_same(set(fp.points), set(ps))
 
         assert len(fp.points) == len(ps) == 1
 
