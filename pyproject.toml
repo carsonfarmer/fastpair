@@ -93,3 +93,8 @@ include = [
  "*__init__.py" = [
      "F401",  # imported but unused
 ]
+
+[tool.mypy]
+non_interactive = true
+install_types = true
+ignore_missing_imports = true
