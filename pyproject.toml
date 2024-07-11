@@ -49,6 +49,7 @@ tests = [
     "pre-commit",
     "pytest",
     "pytest-cov",
+    "pytest-doctestplus",
     "ruff",
     "setuptools_scm",
 ]

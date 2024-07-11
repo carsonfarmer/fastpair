@@ -8,6 +8,7 @@ dependencies:
   # testing
   - pytest
   - pytest-cov
+  - pytest-doctestplus
   - pip:
     # nightly builds
     - --pre \

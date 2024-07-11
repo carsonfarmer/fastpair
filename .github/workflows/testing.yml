@@ -32,7 +32,7 @@
          ]
          include:
            - environment-file: ci/py312-latest.yaml
-             os: macos-latest
+             os: macos-13 # Intel
            - environment-file: ci/py312-latest.yaml
              os: macos-14 # Apple Silicon
            - environment-file: ci/py312-latest.yaml
@@ -72,8 +72,17 @@
            --cov-append \
            --cov-report term-missing \
            --cov-report xml . \
-           --doctest-modules
-       
+
+       - name: run doctests (dev only)
+         if: contains(matrix.env, "dev")
+         run: |
+           pytest \
+           fastpair/ \
+           --verbose \
+           -r a \
+           --color yes \
+           --doctest-only
+
        - name: codecov
          uses: codecov/codecov-action@v4
          with:
