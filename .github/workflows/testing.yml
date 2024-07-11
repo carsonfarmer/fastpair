@@ -74,7 +74,7 @@
            --cov-report xml . \
 
        - name: run doctests (dev only)
-         if: contains(matrix.env, "dev")
+         if: contains(matrix.environment-file, "dev")
          run: |
            pytest \
            fastpair/ \
