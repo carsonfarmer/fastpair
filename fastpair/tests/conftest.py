@@ -2,12 +2,12 @@ import numpy
 import pytest
 
 
-def rand_tuple(dim: int = 2, seed: None | int = None) -> tuple[float]:
+def rand_tuple(dim: int = 2, seed: None | int = None) -> tuple[float, ...]:
     rng = numpy.random.default_rng(seed)
     return tuple([round(rng.uniform(), 4) for j in range(dim)])
 
 
-def point_set(n: int = 50, d: int = 10, seed: int = 0) -> list[tuple[float, float]]:
+def point_set(n: int = 50, d: int = 10, seed: int = 0) -> list[tuple[float, ...]]:
     """Return ``numpy.array`` of shape ``(n, d)``."""
     return [rand_tuple(dim=d, seed=seed + i) for i in range(n)]
 
