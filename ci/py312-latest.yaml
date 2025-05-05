@@ -4,6 +4,7 @@ channels:
 dependencies:
   - python=3.12
   - scipy
+  - typing_extensions
   # testing
   - pytest
   - pytest-cov
