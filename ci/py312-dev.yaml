@@ -4,9 +4,11 @@ channels:
 dependencies:
   - python=3.12
   - pip
+  - typing_extensions
   # testing
   - pytest
   - pytest-cov
+  - pytest-doctestplus
   - pip:
     # nightly builds
     - --pre \
