@@ -5,9 +5,9 @@
 from collections import defaultdict
 from itertools import combinations, cycle
 
-import scipy.spatial.distance as dist
+import scipy.spatial.distance
 
-__all__ = ["FastPair", "dist"]
+__all__ = ["FastPair"]
 
 
 class AttrDict(dict):
@@ -50,7 +50,7 @@ class FastPair:
         https://doi.org/10.1145/351827.351829
     """
 
-    def __init__(self, min_points=10, dist=dist.euclidean):
+    def __init__(self, min_points=10, dist=scipy.spatial.distance.euclidean):
         """Initialize an empty FastPair data-structure.
 
         Parameters
@@ -59,7 +59,7 @@ class FastPair:
             The minimum number of points to add before initializing the
             data-structure. Queries _before_ `min_points` have been added to
             the data-structure will be brute-force.
-        dist : function, default=scipy.spatial.distance.euclidean
+        dist : function, default scipy.spatial.distance.euclidean
             Can be any Python function that returns a distance (float) between
             between two vectors (tuples) `u` and `v`. Any distance function
             from `scipy.spatial.distance` will do the trick. By default, the
@@ -265,7 +265,7 @@ class FastPair:
     #     return self._update_point(a, c)
 
 
-def _closest_pair_brute_force(pts, dst=dist.euclidean):
+def _closest_pair_brute_force(pts, dst=scipy.spatial.distance.euclidean):
     """Compute closest pair of points using brute-force algorithm.
 
     Notes
