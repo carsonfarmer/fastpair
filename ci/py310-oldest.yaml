@@ -5,6 +5,7 @@ dependencies:
   - python=3.10
   - numpy=1.24
   - scipy=1.10
+  - typing_extensions
   # testing
   - pytest
   - pytest-cov
